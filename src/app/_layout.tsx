@@ -6,6 +6,7 @@ import * as SystemUI from "expo-system-ui";
 import { SQLiteProvider, deleteDatabaseAsync, type SQLiteDatabase } from "expo-sqlite";
 import { openCatalog } from "../catalog";
 import { loadMeta } from "../meta";
+import { UpdateProgress, checkForUpdate } from "../update";
 import { useStore } from "../store";
 import { useColors } from "../theme";
 
@@ -31,6 +32,7 @@ export default function Root() {
   const { theme } = useStore();
   const [failed, setFailed] = useState(false);
   useEffect(() => { SystemUI.setBackgroundColorAsync(c.bg); }, [c.bg]);
+  useEffect(checkForUpdate, []);
 
   const bg = { flex: 1, backgroundColor: c.bg };
   if (failed) {
@@ -53,6 +55,7 @@ export default function Root() {
       >
         <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: c.bg } }} />
       </SQLiteProvider>
+      <UpdateProgress />
     </View>
   );
 }

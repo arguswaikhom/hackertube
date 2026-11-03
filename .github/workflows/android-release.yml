@@ -1,0 +1,58 @@
+# Builds a signed Android APK for every `v*` tag and attaches it to a GitHub Release.
+# The app checks the latest release on launch and offers the update (src/update.ts).
+# Needs repository secrets ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD and ANDROID_KEY_ALIAS.
+# See docs/DECISIONS.md, D15.
+name: Android release
+on:
+  push:
+    tags: ["v*"]
+permissions:
+  contents: write
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v4
+      - run: npm ci
+      # The tag is the version: v1.2.3 -> versionName 1.2.3, versionCode 10203.
+      - name: Set version from tag
+        run: |
+          node -e '
+            const fs = require("fs"), v = process.argv[1].replace(/^v/, "");
+            const [a, b, c] = v.split(".").map(Number);
+            if ([a, b, c].some((n) => !Number.isInteger(n) || n < 0 || n > 99)) throw new Error("tag must be vX.Y.Z, each 0-99: " + v);
+            const j = JSON.parse(fs.readFileSync("app.json"));
+            j.expo.version = v;
+            j.expo.android.versionCode = a * 10000 + b * 100 + c;
+            fs.writeFileSync("app.json", JSON.stringify(j, null, 2));
+          ' "$GITHUB_REF_NAME"
+      - run: npx expo prebuild --platform android --no-install
+      # Phones only: x86 builds are for emulators and would double the build time.
+      - run: ./gradlew assembleRelease -PreactNativeArchitectures=armeabi-v7a,arm64-v8a
+        working-directory: android
+      # The generated project signs release builds with the debug key; re-sign with the release key
+      # so each version installs over the last one.
+      - name: Sign
+        env:
+          KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KS_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: |
+          echo "$KEYSTORE" | base64 -d > "$RUNNER_TEMP/release.jks"
+          apksigner="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)/apksigner"
+          "$apksigner" sign --ks "$RUNNER_TEMP/release.jks" --ks-pass env:KS_PASS --ks-key-alias "$KEY_ALIAS" \
+            --out "HackerTube-$GITHUB_REF_NAME.apk" android/app/build/outputs/apk/release/app-release.apk
+          "$apksigner" verify --print-certs "HackerTube-$GITHUB_REF_NAME.apk"
+          rm "$RUNNER_TEMP/release.jks"
+      - run: gh release create "$GITHUB_REF_NAME" "HackerTube-$GITHUB_REF_NAME.apk" --generate-notes --title "HackerTube $GITHUB_REF_NAME"
+        env:
+          GH_TOKEN: ${{ github.token }}

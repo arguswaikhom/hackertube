@@ -4,22 +4,35 @@ Update this at the end of each session. Last updated: 2026-11-03.
 
 ## Where things stand
 
-The YouTube-style redesign and site parity work are built and committed on `main`. There is no GitHub remote yet.
+The YouTube-style redesign and site parity work are built and committed on `main`. `main` is pushed to the public GitHub repo.
 The app works today without YouTube numbers; Longs, durations and date, length and view filters wait on step 1 below.
 
-## Latest change (2026-11-03): own player controls (branch `custom-player`)
+## Latest change (2026-11-03): own player controls
 
 YouTube's controls are hidden and ours sit under the video: play/pause, 10-second skips, seek bar, speed (saved) and
-captions and full screen. See D15. On a Pixel 7 (Android 17) with a release build: play/pause, skips, tapping the
+captions and full screen. See D16. On a Pixel 7 (Android 17) with a release build: play/pause, skips, tapping the
 seek bar, 2× speed (21 s of video in about 10 s), captions on and off, full screen keeping the position, and rotating
 in and out of landscape while playing. The watch page now keeps the player in one place in both layouts, which fixed
 rotation restarting the video. In landscape the two-column page now sizes the player column from the screen width
 and caps the player's height, so the whole video, its controls and the Up next titles fit. Tapping the video itself
 shows YouTube's own overlay (title, channel, a link button and a suggested video) until playback resumes; pausing with
-our button doesn't. Not tried: dragging the seek bar, TalkBack, a tablet, and iOS.
+our button doesn't. Rechecked on the Pixel 7 after merging the APK release work: launch, playback, speed, and
+captions staying off until switched on. Not tried: dragging the seek bar, TalkBack, a tablet, and iOS.
 
 Seen while testing, not caused by this change: tapping a video card in the first seconds after a fresh install crashed
 the app ("The imperative router is unavailable before the first render has finished").
+
+## Earlier change (2026-11-03): APKs on GitHub Releases with in-app updates
+
+A `v*` tag builds a signed APK and publishes a GitHub Release (D15). Android builds check for a newer release on launch,
+download it in the app and open Android's installer. Tested end to end from 1.0.0 to 1.0.1 on the Android 10 phone.
+
+## Earlier change (2026-11-03): channel avatars and links
+
+Cards and the watch page show the channel's picture instead of its initial. Tapping the channel on the watch page opens
+it in YouTube. The URLs come from the metadata file (D5),
+so they appear only after the weekly workflow publishes a file made by the updated script. Seen on a Pixel 7
+(Android 17) with a release build that bundled a locally fetched file: Home cards and the watch page show them.
 
 ## Earlier change (2026-11-03): modernized look
 
@@ -63,11 +76,17 @@ The metadata workflow ran on GitHub Actions on 2026-11-03 (6,454 videos, 0 gone)
 1. Done 2026-11-03: the weekly workflow runs on GitHub, publishes `meta.json` to Pages, and an Android 10 phone showed
    the downloaded durations, views and Longs.
 2. Retest the screens that depend on metadata against real numbers: filters by date, length and views, and sorting.
-3. Offer an Android APK on GitHub Releases. That needs a release signing key kept outside the repo, so updates install
-   over older versions.
+3. Done 2026-11-03 (D15): `v1.0.0` and `v1.0.1` were built by the workflow and published on GitHub Releases. On an
+   Android 10 phone (Xiaomi), 1.0.0 showed the update dialog, downloaded 1.0.1 in the app with the progress card, and
+   Android installed it over 1.0.0. Merged into `main` the same day. Those two tags were cut before the channel avatars change, so the next tag ships it.
 4. Build iOS on a Mac.
 
 ## Known limits
+
+- The first in-app install on the Xiaomi phone failed with "App not installed" (code -22, verification failure) after
+  Google Play Protect's "Install without scanning". Tapping Update again worked. People who hit this can retry.
+- Phones that ran a locally built copy are signed with the debug key; they must uninstall once before the release APK
+  installs.
 
 - Catalogue is frozen at the 2026-10-31 export. New data means a rebuild and an app update.
 - Old catalogue files stay on the device after a version bump (a few tens of MB).

@@ -19,7 +19,10 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "org.hackertube.app"
+      "package": "org.hackertube.app",
+      "permissions": [
+        "android.permission.REQUEST_INSTALL_PACKAGES"
+      ]
     },
     "plugins": [
       "expo-router",
@@ -83,7 +86,8 @@
     "scheme": "hackertube",
     "backgroundColor": "#0F0F0F",
     "extra": {
-      "metaUrl": "https://arguswaikhom.github.io/hackertube/meta.json"
+      "metaUrl": "https://arguswaikhom.github.io/hackertube/meta.json",
+      "releasesUrl": "https://api.github.com/repos/arguswaikhom/hackertube/releases/latest"
     }
   }
 }

@@ -30,6 +30,11 @@ redistribution and require stored data to stay current. So:
 - `.github/workflows/youtube-meta.yml` runs it weekly and publishes it to GitHub Pages, so there's no server to run.
 - `src/meta.ts` downloads it from `expo.extra.metaUrl` in `app.json`, caches it, and discards it after 30 days.
 - With no file, the app works without those numbers: no durations, no Longs, and those filters are hidden.
+- Channels come the same way (added 2026-11-03): the script looks up each video's channel and lists
+  `[channel id, avatar URL]` once per channel in `channels`, with each video pointing at one by index. Until a file has
+  them, cards show the channel's initial. The images load from YouTube's servers, like thumbnails already do. Tapping the
+  channel on the watch page opens it in YouTube; the app has no channel pages of its own. Without the file it opens a
+  YouTube search for the channel's name.
 
 **Why not call YouTube from the app?** One key shared by every install would run out of quota, and the key would ship
 in the app. **Risk:** the file is publicly readable. Moving it behind a Cloudflare Worker is a small change if YouTube's
@@ -95,7 +100,25 @@ and card anatomy stay as in D7. What changed:
 **Why not Reanimated or an icon library with SVG?** Both add native code and a dependency for effects `Animated` and the
 bundled icon fonts already cover.
 
-## D15. Our own player controls, under the video (2026-11-03)
+## D15. APKs on GitHub Releases, with an in-app update prompt (2026-11-03)
+Every `v*` tag builds a signed APK in GitHub Actions and attaches it to a release. On launch, Android builds ask
+GitHub's API for the latest release and, if it's newer, show a dialog: Update, Later, or Skip this version. Update
+downloads the APK inside the app, with a progress card, and opens Android's installer on it. The first time, Android
+asks the user to allow installs from HackerTube.
+- **The tag is the version.** `v1.2.3` becomes versionName 1.2.3 and versionCode 10203, so each part stays under 100.
+- **Signing:** the generated Gradle project signs release builds with the debug key, so the workflow re-signs the APK
+  with `apksigner` and a release key from repository secrets. No config plugin needed. Losing that key means users must
+  uninstall to update, so keep a backup of it outside the repo.
+- **Phones only:** the APK carries arm64-v8a and armeabi-v7a, not the x86 emulator builds.
+- **Privacy:** the check sends GitHub the device's IP address once per launch, with nothing else. No accounts or IDs.
+**Why not expo-updates or Play's in-app updates?** OTA updates can't change native code and need hosting such as EAS;
+Play's in-app updates only work for apps installed from the Play Store. A dialog linking to the APK covers it.
+**How the install works:** `expo-file-system` downloads to the cache and gives a `content://` URI through its own
+FileProvider; `expo-intent-launcher` opens it with ACTION_VIEW. That needs the REQUEST_INSTALL_PACKAGES permission in
+`app.json`. Android checks the signature itself, so a tampered APK can't install over the app. If the download fails,
+the app offers the release page instead.
+
+## D16. Our own player controls, under the video (2026-11-03)
 The user asked for a player with more options, starting with speed. Videos still play through YouTube's embed (D2),
 with YouTube's controls hidden (`controls: 0`) and ours driven through the IFrame API: play and pause, 10-second skips,
 a seek bar, speed from 0.5× to 2×, captions on or off (both remembered between videos), and full screen.

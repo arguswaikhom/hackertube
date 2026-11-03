@@ -4,7 +4,7 @@ import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import type { Video } from "../catalog";
-import { metaOf, useMetaVersion } from "../meta";
+import { avatarOf, metaOf, useMetaVersion } from "../meta";
 import { ago, duration, views } from "../picks";
 import { toggleDislike, toggleLater, useStore } from "../store";
 import { font, hit, useColors } from "../theme";
@@ -84,11 +84,18 @@ function More({ video }: { video: Video }) {
   );
 }
 
-function Avatar({ name }: { name: string }) {
+/** The channel's picture from the metadata file, or its initial until that arrives or if it fails to load. */
+export function Avatar({ video: v, size = 38 }: { video: Video; size?: number }) {
   const c = useColors();
+  const url = avatarOf(v.vid);
+  const [failed, setFailed] = useState<string>();
   return (
-    <View style={[styles.avatar, { backgroundColor: c.raised }]} accessibilityElementsHidden>
-      <Text style={[styles.avatarText, { color: c.text }]}>{name.trim().charAt(0).toUpperCase()}</Text>
+    <View style={[styles.avatar, { width: size, height: size, borderRadius: size / 2, backgroundColor: c.raised }]} accessibilityElementsHidden>
+      {url && failed !== url ? (
+        <Image style={StyleSheet.absoluteFill} source={url} cachePolicy="disk" transition={100} onError={() => setFailed(url)} />
+      ) : (
+        <Text style={[styles.avatarText, { color: c.text }]}>{v.channel.trim().charAt(0).toUpperCase()}</Text>
+      )}
     </View>
   );
 }
@@ -101,7 +108,7 @@ export function VideoCard({ video: v, reason, grid }: { video: Video; reason?: s
     <Press style={[styles.card, grid && styles.cardGrid]} scale={0.98} onPress={() => openVideo(v.vid)} accessibilityRole="button" accessibilityLabel={v.title}>
       <Frame vid={v.vid} style={styles.roundBig} />
       <View style={[styles.info, grid && styles.infoGrid]}>
-        <Avatar name={v.channel} />
+        <Avatar video={v} />
         <View style={styles.text}>
           <Text style={[styles.title, { color: c.text }]} numberOfLines={2}>{v.title}</Text>
           <Text style={[styles.sub, { color: c.muted }]} numberOfLines={1}>{v.channel} • {subline(v)}</Text>
@@ -143,7 +150,7 @@ const styles = StyleSheet.create({
   cardGrid: { paddingHorizontal: 8 },
   info: { flexDirection: "row", gap: 12, paddingHorizontal: 4, paddingTop: 12 },
   infoGrid: { paddingHorizontal: 2 },
-  avatar: { width: 38, height: 38, borderRadius: 19, alignItems: "center", justifyContent: "center" },
+  avatar: { alignItems: "center", justifyContent: "center", overflow: "hidden" },
   avatarText: { fontFamily: font.display, fontSize: 16, fontWeight: "800" },
   text: { flex: 1, minWidth: 0 },
   title: { fontFamily: font.body, fontSize: 16, lineHeight: 22, fontWeight: "600" },

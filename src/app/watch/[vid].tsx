@@ -6,8 +6,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { mentions, upNext, video, videoCategories, type Mention, type Video } from "../../catalog";
 import { Player } from "../../components/Player";
 import { Chip, ChipRow, Empty, IconButton, Press, Sheet, TopBar, type IconName } from "../../components/ui";
-import { VideoMenuProvider, VideoRow, subline } from "../../components/VideoCard";
-import { useMetaVersion } from "../../meta";
+import { Avatar, VideoMenuProvider, VideoRow, subline } from "../../components/VideoCard";
+import { channelUrl, useMetaVersion } from "../../meta";
 import { toggleDislike, toggleLater, toggleLike, useStore } from "../../store";
 import { font, reduceMotion, useColors } from "../../theme";
 
@@ -80,15 +80,14 @@ function Header({ v, said }: { v: Video; said: Mention[] }) {
         </Text>
       </Pressable>
 
-      <View style={styles.channel}>
-        <View style={[styles.avatar, { backgroundColor: c.raised }]}>
-          <Text style={[styles.avatarText, { color: c.text }]}>{v.channel.trim().charAt(0).toUpperCase()}</Text>
-        </View>
+      <Pressable style={styles.channel} onPress={() => Linking.openURL(channelUrl(v.vid, v.channel))}
+        accessibilityRole="link" accessibilityHint="Opens the channel in YouTube">
+        <Avatar video={v} size={40} />
         <View style={styles.channelText}>
           <Text style={[styles.channelName, { color: c.text }]} numberOfLines={1}>{v.channel}</Text>
           <Text style={[styles.meta, { color: c.muted }]} numberOfLines={2}>{recLine(v)}</Text>
         </View>
-      </View>
+      </Pressable>
 
       <ChipRow>
         <Action icon={liked ? "thumbs-up" : "thumbs-up-outline"} label="Like" on={liked} onPress={() => toggleLike(v.vid)} />
@@ -172,8 +171,6 @@ const styles = StyleSheet.create({
   title: { fontFamily: font.display, fontSize: 21, lineHeight: 26, fontWeight: "600", letterSpacing: -0.3 },
   meta: { fontFamily: font.body, fontSize: 13, lineHeight: 18, marginTop: 3 },
   channel: { flexDirection: "row", alignItems: "center", gap: 12, paddingHorizontal: 16, paddingVertical: 14 },
-  avatar: { width: 40, height: 40, borderRadius: 20, alignItems: "center", justifyContent: "center" },
-  avatarText: { fontFamily: font.display, fontSize: 16, fontWeight: "800" },
   channelText: { flex: 1 },
   channelName: { fontFamily: font.body, fontSize: 15, fontWeight: "600" },
   action: { flexDirection: "row", alignItems: "center", gap: 7, height: 38, paddingHorizontal: 16, borderRadius: 19 },
