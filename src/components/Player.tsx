@@ -22,7 +22,7 @@ const page = (vid: string, start: number, rate: number, cc: boolean) => `<!docty
 <style>html,body,#p{margin:0;width:100%;height:100%;background:#000}</style></head><body><div id="p"></div>
 <script>
 const say = (m) => window.ReactNativeWebView.postMessage(m);
-let p, last = "";
+let p, last = "", ccSet = false;
 // Not in YouTube's documented API, but widely used; the only way to switch captions from outside the player.
 const cc = (on) => on ? (p.loadModule("captions"), p.setOption("captions", "reload", true)) : p.unloadModule("captions");
 const tick = () => {
@@ -33,8 +33,13 @@ window.onYouTubeIframeAPIReady = () => p = new YT.Player("p", {
   host: "https://www.youtube-nocookie.com", videoId: ${JSON.stringify(vid)}, width: "100%", height: "100%",
   playerVars: { autoplay: 1, playsinline: 1, rel: 0, controls: 0, iv_load_policy: 3, start: ${Math.floor(start)}, origin: ${JSON.stringify(ORIGIN)} },
   events: {
-    onReady: () => { p.setPlaybackRate(${rate}); cc(${cc}); setInterval(tick, 250); },
-    onStateChange: (e) => { if (e.data === YT.PlayerState.ENDED) say("ended"); else tick(); },
+    onReady: () => { p.setPlaybackRate(${rate}); setInterval(tick, 250); },
+    onStateChange: (e) => {
+      if (e.data === YT.PlayerState.ENDED) return say("ended");
+      // captions load with playback, so setting them any earlier gets overridden by YouTube's default
+      if (e.data === YT.PlayerState.PLAYING && !ccSet) { ccSet = true; cc(${cc}); }
+      tick();
+    },
     onError: (e) => say("error:" + e.data),
   },
 });
