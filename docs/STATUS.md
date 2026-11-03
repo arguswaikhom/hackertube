@@ -10,8 +10,9 @@ The app works today without YouTube numbers; Longs, durations and date, length a
 ## Latest change (2026-11-03): choosing the player controls
 
 Settings has a switch between our controls and YouTube's own (D17). Phones default to ours, tablets to YouTube's.
-Typecheck passes and lint shows no new errors. Not yet run on a device: neither mode after the change, nor a tablet.
-
+On the Android 10 phone with a release build: the switch starts on, a video plays with our controls, and after
+switching it off the next video plays with YouTube's controls on tap, YouTube's full-screen button works and Back leaves
+it. With YouTube's controls, captions follow YouTube's default, which showed them on the video tried. Not tried: a tablet.
 ## Earlier change (2026-11-03): own player controls
 
 YouTube's controls are hidden and ours sit under the video: play/pause, 10-second skips, seek bar, speed (saved) and
