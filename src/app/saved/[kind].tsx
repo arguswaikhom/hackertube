@@ -34,7 +34,7 @@ export default function Saved() {
           ListHeaderComponent={data.length ? (
             <View>
               <PlayAll vids={data.map((v) => v.vid)} />
-              {kind === "history" ? <ChipRow><Chip icon="delete-outline" label="Clear all watch history" onPress={() => update({ seen: [] })} /></ChipRow> : null}
+              {kind === "history" ? <ChipRow><Chip icon="trash-outline" label="Clear all watch history" onPress={() => update({ seen: [] })} /></ChipRow> : null}
             </View>
           ) : undefined}
           ListEmptyComponent={<Empty text={view.empty} />}

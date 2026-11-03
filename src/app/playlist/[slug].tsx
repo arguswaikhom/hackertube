@@ -7,7 +7,7 @@ import { Empty, TopBar } from "../../components/ui";
 import { VideoMenuProvider, VideoRow } from "../../components/VideoCard";
 import { metaOf } from "../../meta";
 import { hours } from "../../picks";
-import { useColors } from "../../theme";
+import { font, useColors } from "../../theme";
 import { Mosaic } from "../(tabs)/playlists";
 
 export default function PlaylistPage() {
@@ -43,8 +43,8 @@ export default function PlaylistPage() {
 
 const styles = StyleSheet.create({
   head: { paddingHorizontal: 12, paddingBottom: 8 },
-  h1: { fontSize: 22, lineHeight: 28, fontWeight: "700", marginTop: 12 },
-  sub: { fontSize: 13, marginTop: 4 },
-  intro: { fontSize: 14, lineHeight: 20, marginTop: 8 },
+  h1: { fontFamily: font.display, fontSize: 22, lineHeight: 28, fontWeight: "700", marginTop: 12 },
+  sub: { fontFamily: font.body, fontSize: 13, marginTop: 4 },
+  intro: { fontFamily: font.body, fontSize: 14, lineHeight: 20, marginTop: 8 },
   play: { marginHorizontal: -12, marginTop: 12 },
 });

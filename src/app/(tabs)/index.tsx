@@ -22,7 +22,7 @@ export default function Home() {
     <View style={{ flex: 1 }}>
       <TopBar back={false} />
       <ChipRow>
-        <Chip icon="tune" label="Filters" onPress={() => router.push("/browse")} />
+        <Chip icon="options-outline" label="Filters" onPress={() => router.push("/browse")} />
         <Chip label="All" on={!area} onPress={() => setArea(null)} />
         {areas.map((a) => <Chip key={a.id} label={a.name} on={area === a.id} onPress={() => setArea(a.id)} />)}
       </ChipRow>

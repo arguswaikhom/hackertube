@@ -7,7 +7,7 @@ import { PlayAll, VideoGrid } from "../components/Lists";
 import { Chip, ChipRow, TopBar } from "../components/ui";
 import { useMetaVersion } from "../meta";
 import type { Filter } from "../picks";
-import { useColors } from "../theme";
+import { font, useColors } from "../theme";
 
 /** Every video, one topic area, or one category: filtered and sorted. */
 export default function Browse() {
@@ -43,5 +43,5 @@ export default function Browse() {
 }
 
 const styles = StyleSheet.create({
-  crumb: { fontSize: 14, paddingHorizontal: 14, paddingBottom: 8 },
+  crumb: { fontFamily: font.body, fontSize: 14, paddingHorizontal: 14, paddingBottom: 8 },
 });

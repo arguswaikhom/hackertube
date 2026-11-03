@@ -7,7 +7,7 @@ import { FilterChips } from "../components/Filters";
 import { Empty, IconButton } from "../components/ui";
 import { VideoMenuProvider, VideoRow } from "../components/VideoCard";
 import type { Filter } from "../picks";
-import { columnsFor, useColors } from "../theme";
+import { font, columnsFor, useColors } from "../theme";
 
 export default function Search() {
   const c = useColors();
@@ -56,5 +56,5 @@ export default function Search() {
 
 const styles = StyleSheet.create({
   bar: { flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: 6, height: 56 },
-  input: { flex: 1, height: 40, borderRadius: 20, paddingHorizontal: 16, fontSize: 16 },
+  input: { fontFamily: font.body, flex: 1, height: 44, borderRadius: 22, paddingHorizontal: 18, fontSize: 16 },
 });

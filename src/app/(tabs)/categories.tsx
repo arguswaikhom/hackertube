@@ -2,9 +2,9 @@ import { useMemo } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { router } from "expo-router";
 import { topics } from "../../catalog";
-import { Chip, TopBar } from "../../components/ui";
+import { Chip, Heading, TopBar } from "../../components/ui";
 import { hasMeta } from "../../meta";
-import { useColors } from "../../theme";
+import { font, useColors } from "../../theme";
 
 export default function Categories() {
   const c = useColors();
@@ -15,20 +15,20 @@ export default function Categories() {
     <View style={{ flex: 1 }}>
       <TopBar back={false} />
       <ScrollView contentContainerStyle={styles.page}>
-        <Text style={[styles.h1, { color: c.text }]} accessibilityRole="header">Categories</Text>
+        <Heading>Categories</Heading>
         <View style={styles.wrap}>
           <Chip label="Recently recommended" onPress={() => go({ sort: "recent", title: "Recently recommended" })} />
           {hasMeta() ? <Chip label="Hidden gems" onPress={() => go({ gems: "1", title: "Hidden gems" })} /> : null}
           <Chip label="All videos" onPress={() => go({ title: "All videos" })} />
         </View>
         {areas.map((a) => (
-          <View key={a.id} style={styles.area}>
-            <Pressable style={styles.areaHead} onPress={() => go({ area: a.id, title: a.name })} accessibilityRole="button">
+          <View key={a.id} style={[styles.area, { backgroundColor: c.raised }]}>
+            <Pressable style={({ pressed }) => [styles.areaHead, pressed && { opacity: 0.6 }]} onPress={() => go({ area: a.id, title: a.name })} accessibilityRole="button">
               <Text style={[styles.h2, { color: c.text }]}>{a.name}</Text>
               <Text style={[styles.count, { color: c.muted }]}>{a.n}</Text>
             </Pressable>
             {a.categories.map((k) => (
-              <Pressable key={k.id} style={styles.cat} onPress={() => go({ cat: k.id, title: k.name })} accessibilityRole="button">
+              <Pressable key={k.id} style={({ pressed }) => [styles.cat, { borderTopColor: c.line }, pressed && { opacity: 0.6 }]} onPress={() => go({ cat: k.id, title: k.name })} accessibilityRole="button">
                 <Text style={[styles.catText, { color: c.text }]}>{k.name}</Text>
                 <Text style={[styles.count, { color: c.muted }]}>{k.n}</Text>
               </Pressable>
@@ -41,13 +41,12 @@ export default function Categories() {
 }
 
 const styles = StyleSheet.create({
-  page: { paddingHorizontal: 12, paddingBottom: 24 },
-  h1: { fontSize: 24, fontWeight: "700", marginBottom: 12 },
-  wrap: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
-  area: { marginTop: 22 },
-  areaHead: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 12, paddingVertical: 6 },
-  h2: { fontSize: 18, fontWeight: "700", flexShrink: 1 },
-  cat: { flexDirection: "row", justifyContent: "space-between", gap: 12, paddingVertical: 9 },
-  catText: { fontSize: 15, flexShrink: 1 },
-  count: { fontSize: 13 },
+  page: { paddingBottom: 24 },
+  wrap: { flexDirection: "row", flexWrap: "wrap", gap: 8, paddingHorizontal: 12, marginBottom: 6 },
+  area: { marginTop: 14, marginHorizontal: 12, borderRadius: 20, paddingHorizontal: 16, paddingVertical: 6 },
+  areaHead: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 12, paddingVertical: 10 },
+  h2: { fontFamily: font.display, fontSize: 18, fontWeight: "600", letterSpacing: -0.2, flexShrink: 1 },
+  cat: { flexDirection: "row", justifyContent: "space-between", gap: 12, paddingVertical: 12, borderTopWidth: StyleSheet.hairlineWidth },
+  catText: { fontFamily: font.body, fontSize: 15, flexShrink: 1 },
+  count: { fontFamily: font.body, fontSize: 13 },
 });

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { Linking, ScrollView, StyleSheet, Text, View } from "react-native";
 import { stats } from "../catalog";
 import { TopBar } from "../components/ui";
-import { useColors } from "../theme";
+import { font, useColors } from "../theme";
 
 const LINKS = [
   ["hackertube.org", "https://hackertube.org"],
@@ -74,8 +74,8 @@ export default function About() {
 
 const styles = StyleSheet.create({
   page: { padding: 16, paddingBottom: 32, gap: 8, maxWidth: 680 },
-  h: { fontSize: 18, fontWeight: "700", marginTop: 12 },
-  body: { fontSize: 15, lineHeight: 22 },
-  stats: { fontSize: 14, lineHeight: 20 },
-  link: { fontSize: 15, lineHeight: 24 },
+  h: { fontFamily: font.display, fontSize: 18, fontWeight: "700", marginTop: 12 },
+  body: { fontFamily: font.body, fontSize: 15, lineHeight: 22 },
+  stats: { fontFamily: font.body, fontSize: 14, lineHeight: 20 },
+  link: { fontFamily: font.body, fontSize: 15, lineHeight: 24 },
 });

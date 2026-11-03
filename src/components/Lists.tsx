@@ -12,7 +12,7 @@ export const playAll = (vids: string[]) =>
   Linking.openURL(`https://www.youtube.com/watch_videos?video_ids=${vids.slice(0, 50).join(",")}`);
 
 export const PlayAll = ({ vids }: { vids: string[] }) =>
-  vids.length ? <ChipRow><Chip icon="playlist-play" label="Play all on YouTube" onPress={() => playAll(vids)} /></ChipRow> : null;
+  vids.length ? <ChipRow><Chip icon="play" label="Play all on YouTube" onPress={() => playAll(vids)} /></ChipRow> : null;
 
 /** Infinite grid of big cards over a list of rows, loaded a page at a time. */
 export function VideoGrid({ rows, header, empty, reasons }: {

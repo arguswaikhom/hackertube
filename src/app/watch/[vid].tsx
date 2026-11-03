@@ -1,15 +1,15 @@
-import { useMemo, useState } from "react";
-import { FlatList, Linking, Pressable, ScrollView, Share, StyleSheet, Text, View, useWindowDimensions } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Animated, FlatList, Linking, Pressable, ScrollView, Share, StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { mentions, upNext, video, videoCategories, type Mention, type Video } from "../../catalog";
 import { Player } from "../../components/Player";
-import { Chip, ChipRow, Empty, IconButton, Sheet, TopBar, type IconName } from "../../components/ui";
+import { Chip, ChipRow, Empty, IconButton, Press, Sheet, TopBar, type IconName } from "../../components/ui";
 import { VideoMenuProvider, VideoRow, subline } from "../../components/VideoCard";
 import { useMetaVersion } from "../../meta";
 import { toggleDislike, toggleLater, toggleLike, useStore } from "../../store";
-import { useColors } from "../../theme";
+import { font, reduceMotion, useColors } from "../../theme";
 
 const STANCE: Record<string, string> = {
   strong_rec: "Strongly recommends", rec: "Recommends", reference: "Cites", joke: "Joke", critical: "Critical",
@@ -22,12 +22,24 @@ const recLine = (v: Video) =>
 
 function Action({ icon, label, on, onPress }: { icon: IconName; label: string; on?: boolean; onPress: () => void }) {
   const c = useColors();
+  // The icon pops when the action switches on, so the change is noticed.
+  const [pop] = useState(() => new Animated.Value(1));
+  const was = useRef(on);
+  useEffect(() => {
+    if (on && !was.current && !reduceMotion) {
+      pop.setValue(0.6);
+      Animated.spring(pop, { toValue: 1, useNativeDriver: true, speed: 14, bounciness: 14 }).start();
+    }
+    was.current = on;
+  }, [on, pop]);
   return (
-    <Pressable onPress={onPress} accessibilityRole="button" accessibilityState={{ selected: !!on }} accessibilityLabel={label}
-      style={[styles.action, { backgroundColor: on ? c.chipOn : c.raised }]}>
-      <MaterialIcons name={icon} size={19} color={on ? c.chipOnText : c.text} />
-      <Text style={[styles.actionText, { color: on ? c.chipOnText : c.text }]}>{label}</Text>
-    </Pressable>
+    <Press onPress={onPress} accessibilityRole="button" accessibilityState={{ selected: !!on }} accessibilityLabel={label}
+      style={[styles.action, { backgroundColor: on ? c.accent : c.raised }]}>
+      <Animated.View style={{ transform: [{ scale: pop }] }}>
+        <Ionicons name={icon} size={18} color={on ? "#fff" : c.text} />
+      </Animated.View>
+      <Text style={[styles.actionText, { color: on ? "#fff" : c.text }]}>{label}</Text>
+    </Press>
   );
 }
 
@@ -79,22 +91,22 @@ function Header({ v, said }: { v: Video; said: Mention[] }) {
       </View>
 
       <ChipRow>
-        <Action icon={liked ? "thumb-up" : "thumb-up-off-alt"} label="Like" on={liked} onPress={() => toggleLike(v.vid)} />
-        <Action icon={disliked ? "thumb-down" : "thumb-down-off-alt"} label="Not for me" on={disliked} onPress={() => toggleDislike(v.vid)} />
-        <Action icon={saved ? "check" : "schedule"} label={saved ? "Saved" : "Watch later"} on={saved} onPress={() => toggleLater(v.vid)} />
-        <Action icon="share" label="Share" onPress={() => Share.share({ message: `${v.title} ${url}` })} />
-        <Action icon="open-in-new" label="YouTube" onPress={() => Linking.openURL(url)} />
+        <Action icon={liked ? "thumbs-up" : "thumbs-up-outline"} label="Like" on={liked} onPress={() => toggleLike(v.vid)} />
+        <Action icon={disliked ? "thumbs-down" : "thumbs-down-outline"} label="Not for me" on={disliked} onPress={() => toggleDislike(v.vid)} />
+        <Action icon={saved ? "checkmark" : "time-outline"} label={saved ? "Saved" : "Watch later"} on={saved} onPress={() => toggleLater(v.vid)} />
+        <Action icon="share-social-outline" label="Share" onPress={() => Share.share({ message: `${v.title} ${url}` })} />
+        <Action icon="open-outline" label="YouTube" onPress={() => Linking.openURL(url)} />
       </ChipRow>
 
       {first ? (
-        <Pressable style={[styles.teaser, { backgroundColor: c.raised }]} onPress={() => setSheet("comments")} accessibilityRole="button">
+        <Press scale={0.98} style={[styles.teaser, { backgroundColor: c.raised }]} onPress={() => setSheet("comments")} accessibilityRole="button">
           <Text style={[styles.teaserHead, { color: c.text }]}>
             {said.length} comment{said.length === 1 ? "" : "s"} from Hacker News
           </Text>
           <Text style={[styles.meta, { color: c.text }]} numberOfLines={2}>
             {first.text.replaceAll("[VIDEO]", "▶ this video").replaceAll("[LINK]", "(link)")}
           </Text>
-        </Pressable>
+        </Press>
       ) : null}
 
       <Sheet open={sheet === "about"} onClose={() => setSheet(null)} title="Description" tall>
@@ -135,7 +147,7 @@ export default function Watch() {
       <View style={{ flex: 1, paddingTop: top, backgroundColor: c.bg }}>
         {/* above the player, never on it: YouTube's policies don't allow covering the embed */}
         <View style={styles.close}>
-          <IconButton name="keyboard-arrow-down" label="Close video" size={26} onPress={() => router.back()} />
+          <IconButton name="chevron-down" label="Close video" size={26} onPress={() => router.back()} />
         </View>
         {wide ? (
           <View style={styles.wide}>
@@ -160,26 +172,26 @@ const styles = StyleSheet.create({
   wide: { flex: 1, flexDirection: "row", gap: 16, paddingHorizontal: 16 },
   main: { flex: 3 },
   side: { flex: 2 },
-  close: { height: 40, justifyContent: "center", paddingLeft: 4 },
-  block: { paddingHorizontal: 12, paddingTop: 12 },
-  title: { fontSize: 18, lineHeight: 24, fontWeight: "700" },
-  meta: { fontSize: 13, lineHeight: 18, marginTop: 3 },
-  channel: { flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 12, paddingVertical: 12 },
-  avatar: { width: 36, height: 36, borderRadius: 18, alignItems: "center", justifyContent: "center" },
-  avatarText: { fontSize: 15, fontWeight: "700" },
+  close: { height: 48, justifyContent: "center", paddingLeft: 6 },
+  block: { paddingHorizontal: 16, paddingTop: 16 },
+  title: { fontFamily: font.display, fontSize: 21, lineHeight: 26, fontWeight: "600", letterSpacing: -0.3 },
+  meta: { fontFamily: font.body, fontSize: 13, lineHeight: 18, marginTop: 3 },
+  channel: { flexDirection: "row", alignItems: "center", gap: 12, paddingHorizontal: 16, paddingVertical: 14 },
+  avatar: { width: 40, height: 40, borderRadius: 20, alignItems: "center", justifyContent: "center" },
+  avatarText: { fontFamily: font.display, fontSize: 16, fontWeight: "800" },
   channelText: { flex: 1 },
-  channelName: { fontSize: 15, fontWeight: "600" },
-  action: { flexDirection: "row", alignItems: "center", gap: 6, height: 36, paddingHorizontal: 13, borderRadius: 18 },
-  actionText: { fontSize: 14, fontWeight: "600" },
-  teaser: { marginHorizontal: 12, marginTop: 2, marginBottom: 6, padding: 12, borderRadius: 12 },
-  teaserHead: { fontSize: 14, fontWeight: "700" },
-  upNext: { fontSize: 16, fontWeight: "700", paddingHorizontal: 12, paddingTop: 12, paddingBottom: 4 },
-  sheetBody: { padding: 16, gap: 10 },
-  body: { fontSize: 15, lineHeight: 22 },
+  channelName: { fontFamily: font.body, fontSize: 15, fontWeight: "600" },
+  action: { flexDirection: "row", alignItems: "center", gap: 7, height: 38, paddingHorizontal: 16, borderRadius: 19 },
+  actionText: { fontFamily: font.body, fontSize: 14, fontWeight: "600" },
+  teaser: { marginHorizontal: 16, marginTop: 2, marginBottom: 6, paddingHorizontal: 16, paddingVertical: 14, borderRadius: 20, gap: 4 },
+  teaserHead: { fontFamily: font.body, fontSize: 14, fontWeight: "700" },
+  upNext: { fontFamily: font.display, fontSize: 18, fontWeight: "600", paddingHorizontal: 16, paddingTop: 18, paddingBottom: 6 },
+  sheetBody: { paddingHorizontal: 20, paddingVertical: 12, gap: 10 },
+  body: { fontFamily: font.body, fontSize: 15, lineHeight: 22 },
   wrap: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginTop: 4 },
   comment: { paddingBottom: 18 },
-  commentText: { fontSize: 15, lineHeight: 22, marginTop: 4 },
+  commentText: { fontFamily: font.body, fontSize: 15, lineHeight: 22, marginTop: 4 },
   commentFoot: { flexDirection: "row", gap: 16, marginTop: 6 },
-  stance: { fontSize: 13, fontWeight: "600" },
-  hn: { fontSize: 13, fontWeight: "600" },
+  stance: { fontFamily: font.body, fontSize: 13, fontWeight: "600" },
+  hn: { fontFamily: font.body, fontSize: 13, fontWeight: "600" },
 });

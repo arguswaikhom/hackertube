@@ -60,7 +60,7 @@ disallows `/api/` and the license text names only the zip. Worth mentioning if a
 ## D9. Keyboard shortcuts left out (2026-11-02)
 They're desktop-only on the site, and touch gestures cover the same actions. Reconsider for tablets with keyboards.
 
-## D10. System fonts and Material icons (2026-11-02)
+## D10. System fonts and Material icons (2026-11-02). Replaced by D14
 Replaced the custom serif look from the first version, because the YouTube app uses the platform's sans-serif.
 
 ## D11. Windows build setup (2026-11-02)
@@ -75,3 +75,22 @@ author. Code is MIT; the data stays ODC-By with attribution. Android package and
 ## D13. Nothing personal in the public repo (2026-11-03)
 Commits use the owner's GitHub noreply address, not a personal email. Docs describe test devices generically. Secrets live
 in `.env` (git-ignored) and GitHub secrets. Machine-specific paths and tooling live outside the repo.
+
+## D14. A modernized YouTube look (2026-11-03)
+The user found the exact YouTube copy dull and asked to keep its identity but modernize the details. Layout, navigation
+and card anatomy stay as in D7. What changed:
+- **Type:** Figtree for reading and Bricolage Grotesque for the wordmark, headings and video titles on the watch page.
+  Both are embedded with the `expo-font` config plugin from `@expo-google-fonts`, so they're there at first launch with
+  no loading step. Names live in `font` in `src/theme.ts`.
+- **Shape:** rounder corners that grow with the size of the thing: thumbnails 20 in the feed and 14 in rows, pill
+  chips and buttons, 20 for grouped panels, 28 for sheets. Feed cards are inset from the screen edge.
+- **Icons:** Ionicons (outline when off, filled when on) instead of Material icons. Never `logo-youtube` (D7).
+- **Color:** orange marks state: the selected tab's pill, Like and Watch later when on, and Home's "why this video"
+  line. `accentText` is a darker orange in light theme because #FF6600 is too faint for small text on white.
+- **Motion:** only in answer to a touch. Things sink slightly while pressed, sheets spring up, the tab pill grows in, a
+  switched-on action pops. All of it is skipped when the system's reduce-motion setting is on. Built on React
+  Native's `Animated`, so there's no new native dependency.
+- **Dark by default**, as the user asked. Light and "Use device theme" stay in Settings. Installs from before this
+  keep whatever theme they had saved.
+**Why not Reanimated or an icon library with SVG?** Both add native code and a dependency for effects `Animated` and the
+bundled icon fonts already cover.

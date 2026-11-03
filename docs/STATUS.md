@@ -7,6 +7,14 @@ Update this at the end of each session. Last updated: 2026-11-03.
 The YouTube-style redesign and site parity work are built and committed on `main`. There is no GitHub remote yet.
 The app works today without YouTube numbers; Longs, durations and date, length and view filters wait on step 1 below.
 
+## Latest change (2026-11-03): modernized look
+
+New fonts, rounder shapes, Ionicons, touch animations and dark as the default theme. See D14. Checked on the Android 10
+phone with a release build: Home, the three-dot sheet, the watch page with Like switched on, You, Categories,
+Settings, light and dark, and tab labels fitting. Not yet seen on the redesign: Playlists, a playlist page, Search,
+Filters sheet, Longs, About, tablet layouts, and the reduce-motion setting. New installs starting in dark wasn't tried,
+because that means clearing the test phone's data.
+
 ## Verified
 
 Tested on 2026-11-02 and 03 with a release build.

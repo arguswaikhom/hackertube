@@ -1,10 +1,10 @@
 import { useMemo } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import { ScrollView, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import { router } from "expo-router";
 import { playlists, type Playlist } from "../../catalog";
-import { TopBar } from "../../components/ui";
+import { Heading, Press, TopBar } from "../../components/ui";
 import { Frame } from "../../components/VideoCard";
-import { columnsFor, useColors } from "../../theme";
+import { font, columnsFor, useColors } from "../../theme";
 
 const TIERS = [
   ["start", "Start here", "Broad, essential lists for your first visit."],
@@ -23,11 +23,11 @@ export function Mosaic({ vids, label }: { vids: string[]; label?: string }) {
 function Card({ p, width }: { p: Playlist; width: number }) {
   const c = useColors();
   return (
-    <Pressable style={{ width }} onPress={() => router.push(`/playlist/${p.slug}`)} accessibilityRole="button" accessibilityLabel={p.title}>
+    <Press style={{ width }} scale={0.98} onPress={() => router.push(`/playlist/${p.slug}`)} accessibilityRole="button" accessibilityLabel={p.title}>
       <Mosaic vids={p.cover} label={`${p.count} videos`} />
       <Text style={[styles.title, { color: c.text }]} numberOfLines={2}>{p.title}</Text>
       <Text style={[styles.pitch, { color: c.muted }]} numberOfLines={3}>{p.pitch}</Text>
-    </Pressable>
+    </Press>
   );
 }
 
@@ -41,8 +41,7 @@ export default function Playlists() {
     <View style={{ flex: 1 }}>
       <TopBar back={false} />
       <ScrollView contentContainerStyle={styles.page}>
-        <Text style={[styles.h1, { color: c.text }]} accessibilityRole="header">Playlists</Text>
-        <Text style={[styles.pitch, { color: c.muted }]}>Curated by Claude from what Hacker News recommends, each in a deliberate order.</Text>
+        <Heading sub="Curated by Claude from what Hacker News recommends, each in a deliberate order.">Playlists</Heading>
         {TIERS.map(([tier, title, blurb]) => (
           <View key={tier} style={styles.tier}>
             <Text style={[styles.h2, { color: c.text }]} accessibilityRole="header">{title}</Text>
@@ -58,14 +57,13 @@ export default function Playlists() {
 }
 
 const styles = StyleSheet.create({
-  page: { paddingHorizontal: 12, paddingBottom: 24 },
-  h1: { fontSize: 24, fontWeight: "700" },
-  h2: { fontSize: 19, fontWeight: "700" },
-  tier: { marginTop: 22 },
+  page: { paddingBottom: 24 },
+  h2: { fontFamily: font.display, fontSize: 19, fontWeight: "700" },
+  tier: { marginTop: 18, paddingHorizontal: 12 },
   grid: { flexDirection: "row", flexWrap: "wrap", gap: 16, columnGap: 12, marginTop: 12 },
-  mosaic: { flexDirection: "row", flexWrap: "wrap", borderRadius: 10, overflow: "hidden" },
-  tile: { width: "50%" },
-  count: { position: "absolute", right: 6, bottom: 6, color: "#fff", backgroundColor: "rgba(0,0,0,0.8)", fontSize: 12, fontWeight: "600", paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4, overflow: "hidden" },
-  title: { fontSize: 15, lineHeight: 20, fontWeight: "600", marginTop: 8 },
-  pitch: { fontSize: 13, lineHeight: 18, marginTop: 2 },
+  mosaic: { flexDirection: "row", flexWrap: "wrap", gap: 2, borderRadius: 20, overflow: "hidden" },
+  tile: { width: "49.6%" },
+  count: { fontFamily: font.body, position: "absolute", right: 6, bottom: 6, color: "#fff", backgroundColor: "rgba(0,0,0,0.8)", fontSize: 12, fontWeight: "600", paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4, overflow: "hidden" },
+  title: { fontFamily: font.body, fontSize: 15, lineHeight: 20, fontWeight: "600", marginTop: 8 },
+  pitch: { fontFamily: font.body, fontSize: 13, lineHeight: 18, marginTop: 2 },
 });

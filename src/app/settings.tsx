@@ -1,9 +1,9 @@
 import { ScrollView, StyleSheet, Switch, Text, View } from "react-native";
 import { Chip, TopBar } from "../components/ui";
 import { update, useStore, type State } from "../store";
-import { useColors } from "../theme";
+import { font, useColors } from "../theme";
 
-const THEMES: [State["theme"], string][] = [["system", "Use device theme"], ["light", "Light"], ["dark", "Dark"]];
+const THEMES: [State["theme"], string][] = [["dark", "Dark"], ["light", "Light"], ["system", "Use device theme"]];
 
 export default function Settings() {
   const c = useColors();
@@ -25,7 +25,7 @@ export default function Settings() {
               looks like. Turn it off to see the original thumbnails.
             </Text>
           </View>
-          <Switch value={frames} onValueChange={(v) => update({ frames: v })} accessibilityLabel="Show video frames instead of thumbnails" />
+          <Switch value={frames} trackColor={{ true: c.accent, false: c.line }} thumbColor="#FFFFFF" onValueChange={(v) => update({ frames: v })} accessibilityLabel="Show video frames instead of thumbnails" />
         </View>
       </ScrollView>
     </View>
@@ -34,9 +34,9 @@ export default function Settings() {
 
 const styles = StyleSheet.create({
   page: { padding: 16, gap: 12 },
-  h: { fontSize: 16, fontWeight: "600" },
+  h: { fontFamily: font.body, fontSize: 16, fontWeight: "600" },
   wrap: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   row: { flexDirection: "row", gap: 12, alignItems: "flex-start", marginTop: 16 },
   text: { flex: 1, gap: 4 },
-  p: { fontSize: 14, lineHeight: 20 },
+  p: { fontFamily: font.body, fontSize: 14, lineHeight: 20 },
 });

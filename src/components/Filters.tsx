@@ -3,7 +3,7 @@ import { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { hasMeta } from "../meta";
 import type { Filter } from "../picks";
-import { useColors } from "../theme";
+import { font, useColors } from "../theme";
 import { Chip, ChipRow, Sheet } from "./ui";
 
 type Option = [key: keyof Filter, value: string, label: string, needsMeta?: boolean];
@@ -43,7 +43,7 @@ export function FilterChips({ filter, onChange, fixed = [] }: {
   return (
     <>
       <ChipRow>
-        <Chip icon="tune" label="Filters" onPress={() => setOpen(true)} />
+        <Chip icon="options-outline" label="Filters" onPress={() => setOpen(true)} />
         {active.map(([k, v, label]) => <Chip key={k + v} label={`${label}  ×`} on onPress={() => toggle(k, v)} />)}
       </ChipRow>
       <Sheet open={open} onClose={() => setOpen(false)} title="Filters" tall>
@@ -68,7 +68,7 @@ export function FilterChips({ filter, onChange, fixed = [] }: {
 
 const styles = StyleSheet.create({
   body: { padding: 16, gap: 18 },
-  h: { fontSize: 15, fontWeight: "700", marginBottom: 8 },
+  h: { fontFamily: font.display, fontSize: 15, fontWeight: "700", marginBottom: 8 },
   wrap: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
-  note: { fontSize: 14, lineHeight: 20 },
+  note: { fontFamily: font.body, fontSize: 14, lineHeight: 20 },
 });

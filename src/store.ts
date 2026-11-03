@@ -14,7 +14,7 @@ export type State = {
 };
 
 const KEY = "state-v2";
-const empty: State = { likes: [], dislikes: [], later: [], seen: [], hidden: [], frames: true, theme: "system" };
+const empty: State = { likes: [], dislikes: [], later: [], seen: [], hidden: [], frames: true, theme: "dark" };
 
 const load = (): State => {
   try {

@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Linking, Pressable, StyleSheet, Text, View } from "react-native";
 import { WebView, type WebViewMessageEvent } from "react-native-webview";
 import Constants from "expo-constants";
-import { MaterialIcons } from "@expo/vector-icons";
-import { useColors } from "../theme";
+import { Ionicons } from "@expo/vector-icons";
+import { font, useColors } from "../theme";
 import { hide, markSeen } from "../store";
 import { Frame } from "./VideoCard";
 
@@ -73,7 +73,7 @@ export function Player({ vid, title }: { vid: string; title: string }) {
         <Frame vid={vid} badge={false} />
         <View style={styles.center}>
           <View style={styles.play}>
-            <MaterialIcons name={status === "ended" ? "replay" : "play-arrow"} size={38} color="#fff" />
+            <Ionicons name={status === "ended" ? "refresh" : "play"} size={30} color="#fff" style={status === "ended" ? undefined : styles.nudge} />
           </View>
         </View>
       </Pressable>
@@ -91,7 +91,8 @@ const styles = StyleSheet.create({
   box: { width: "100%", aspectRatio: 16 / 9, backgroundColor: "#000" },
   web: { flex: 1, backgroundColor: "#000" },
   center: { ...StyleSheet.absoluteFill, alignItems: "center", justifyContent: "center" },
-  play: { width: 64, height: 64, borderRadius: 32, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(0,0,0,0.6)" },
-  note: { fontSize: 14, lineHeight: 20, paddingHorizontal: 12, paddingTop: 10 },
-  link: { fontSize: 14, fontWeight: "600", paddingHorizontal: 12, paddingTop: 6 },
+  play: { width: 68, height: 68, borderRadius: 34, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(0,0,0,0.55)", borderWidth: 1.5, borderColor: "rgba(255,255,255,0.35)" },
+  nudge: { marginLeft: 4 }, // the play triangle looks off-centre without it
+  note: { fontFamily: font.body, fontSize: 14, lineHeight: 20, paddingHorizontal: 12, paddingTop: 10 },
+  link: { fontFamily: font.body, fontSize: 14, fontWeight: "600", paddingHorizontal: 12, paddingTop: 6 },
 });
