@@ -1,5 +1,7 @@
 # HackerTube for Android and iOS
 
+![HackerTube on Android: Home, a video page, Categories, and Home in light theme](docs/screenshots/banner.png)
+
 An unofficial, open source mobile app for [hackertube.org](https://hackertube.org): the YouTube videos that Hacker
 News keeps telling each other to watch. 6,454 videos, 39,834 HN comments, 27 playlists, and a YouTube-style interface
 for phones and tablets.
@@ -9,6 +11,22 @@ for phones and tablets.
 - No autoplay, and the player closes when a video ends, so YouTube's suggestion wall never appears.
 
 Not made by or affiliated with hackertube.org, YouTube, Google, Hacker News or Y Combinator.
+
+## Screenshots
+
+Taken on a Pixel 7 in the default dark theme.
+
+| Home | Video page | Comments from HN |
+| :---: | :---: | :---: |
+| <img src="docs/screenshots/home.png" width="260" alt="Home feed with topic chips and video cards"> | <img src="docs/screenshots/watch.png" width="260" alt="Video page with Like, Not for me, Watch later and an HN comments preview"> | <img src="docs/screenshots/comments.png" width="260" alt="Sheet of Hacker News comments about the video"> |
+
+| Search | Categories | Playlists |
+| :---: | :---: | :---: |
+| <img src="docs/screenshots/search.png" width="260" alt="Search results for distributed systems"> | <img src="docs/screenshots/categories.png" width="260" alt="Categories grouped by topic area with video counts"> | <img src="docs/screenshots/playlists.png" width="260" alt="Curated playlists with four-frame covers"> |
+
+| Light theme | In motion |
+| :---: | :---: |
+| <img src="docs/screenshots/home-light.png" width="260" alt="Home feed in light theme"> | <img src="docs/screenshots/motion.gif" width="260" alt="Opening the three-dot sheet, opening a video and tapping Like"> |
 
 ## Build it
 
