@@ -4,8 +4,8 @@ import { WebView, type WebViewMessageEvent } from "react-native-webview";
 import Constants from "expo-constants";
 import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
-import { font, useColors } from "../theme";
-import { hide, markSeen, update, useStore } from "../store";
+import { font, tablet, useColors } from "../theme";
+import { getState, hide, markSeen, update, useStore } from "../store";
 import { Frame } from "./VideoCard";
 import { Chip, IconButton, Press, Sheet } from "./ui";
 
@@ -15,9 +15,9 @@ const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 const BAR = 88; // height of the controls under the video
 const INSET = 100; // ponytail: rough room for the status bar and the close button above the player
 
-// YouTube's own controls are hidden (controls: 0) and ours sit under the video, never on it:
-// YouTube's policies don't allow anything in front of the embed.
-const page = (vid: string, start: number, rate: number, cc: boolean) => `<!doctype html><html><head>
+// With ours, YouTube's own controls are hidden (controls: 0) and ours sit under the video, never on it:
+// YouTube's policies don't allow anything in front of the embed. With YouTube's, speed and captions are left to YouTube.
+const page = (vid: string, start: number, rate: number, cc: boolean, own: boolean) => `<!doctype html><html><head>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>html,body,#p{margin:0;width:100%;height:100%;background:#000}</style></head><body><div id="p"></div>
 <script>
@@ -31,13 +31,13 @@ const tick = () => {
 };
 window.onYouTubeIframeAPIReady = () => p = new YT.Player("p", {
   host: "https://www.youtube-nocookie.com", videoId: ${JSON.stringify(vid)}, width: "100%", height: "100%",
-  playerVars: { autoplay: 1, playsinline: 1, rel: 0, controls: 0, iv_load_policy: 3, start: ${Math.floor(start)}, origin: ${JSON.stringify(ORIGIN)} },
+  playerVars: { autoplay: 1, playsinline: 1, rel: 0, controls: ${own ? 0 : 1}, iv_load_policy: 3, start: ${Math.floor(start)}, origin: ${JSON.stringify(ORIGIN)} },
   events: {
-    onReady: () => { p.setPlaybackRate(${rate}); setInterval(tick, 250); },
+    onReady: () => { ${own ? `p.setPlaybackRate(${rate});` : ""} setInterval(tick, 250); },
     onStateChange: (e) => {
       if (e.data === YT.PlayerState.ENDED) return say("ended");
       // captions load with playback, so setting them any earlier gets overridden by YouTube's default
-      if (e.data === YT.PlayerState.PLAYING && !ccSet) { ccSet = true; cc(${cc}); }
+      if (${own} && e.data === YT.PlayerState.PLAYING && !ccSet) { ccSet = true; cc(${cc}); }
       tick();
     },
     onError: (e) => say("error:" + e.data),
@@ -85,9 +85,9 @@ function Seek({ pos, dur, onSeek }: { pos: number; dur: number; onSeek: (t: numb
   );
 }
 
-/** One YouTube embed with our controls under it. Mounted fresh for fullscreen, starting where the other left off. */
-function Screen({ vid, start, width, full, onFull, onStatus, onTime }: {
-  vid: string; start: number; width: number; full: boolean; onFull: () => void;
+/** One YouTube embed, with our controls under it if `own`. Mounted fresh for fullscreen, starting where the other left off. */
+function Screen({ vid, start, width, own, full, onFull, onStatus, onTime }: {
+  vid: string; start: number; width: number; own: boolean; full: boolean; onFull: () => void;
   onStatus: (s: Status) => void; onTime: (t: number) => void;
 }) {
   const { speed, captions } = useStore();
@@ -117,32 +117,35 @@ function Screen({ vid, start, width, full, onFull, onStatus, onTime }: {
       <View style={[styles.box, { width }]}>
         <WebView
           ref={web}
-          source={{ html: page(vid, start, rate, cc), baseUrl: ORIGIN }}
+          source={{ html: page(vid, start, rate, cc, own), baseUrl: ORIGIN }}
           onMessage={onMessage}
           onError={() => onStatus("offline")}
+          allowsFullscreenVideo={!own}
           allowsInlineMediaPlayback
           mediaPlaybackRequiresUserAction={false}
           style={styles.web}
         />
       </View>
-      <View style={styles.bar}>
-        <Seek pos={t.pos} dur={t.dur} onSeek={seek} />
-        <View style={styles.row}>
-          <IconButton name={playing ? "pause" : "play"} label={playing ? "Pause" : "Play"} color="#fff" size={26}
-            onPress={() => run(playing ? "p.pauseVideo()" : "p.playVideo()")} />
-          <IconButton name="play-back" label="Back 10 seconds" color="#fff" onPress={() => seek(t.pos - 10)} />
-          <IconButton name="play-forward" label="Forward 10 seconds" color="#fff" onPress={() => seek(t.pos + 10)} />
-          <Text style={styles.time}>{clock(t.pos)}{t.dur ? ` / ${clock(t.dur)}` : ""}</Text>
-          <Press onPress={() => { update({ captions: !captions }); run(`cc(${!captions})`); }} style={[styles.speed, captions && styles.on]}
-            accessibilityRole="switch" accessibilityState={{ checked: captions }} accessibilityLabel="Captions">
-            <Text style={[styles.speedText, captions && styles.onText]}>CC</Text>
-          </Press>
-          <Press onPress={() => setSpeeds(true)} style={styles.speed} accessibilityRole="button" accessibilityLabel={`Speed ${speed}×`}>
-            <Text style={styles.speedText}>{speed}×</Text>
-          </Press>
-          <IconButton name={full ? "contract" : "expand"} label={full ? "Exit full screen" : "Full screen"} color="#fff" onPress={onFull} />
+      {own ? (
+        <View style={styles.bar}>
+          <Seek pos={t.pos} dur={t.dur} onSeek={seek} />
+          <View style={styles.row}>
+            <IconButton name={playing ? "pause" : "play"} label={playing ? "Pause" : "Play"} color="#fff" size={26}
+              onPress={() => run(playing ? "p.pauseVideo()" : "p.playVideo()")} />
+            <IconButton name="play-back" label="Back 10 seconds" color="#fff" onPress={() => seek(t.pos - 10)} />
+            <IconButton name="play-forward" label="Forward 10 seconds" color="#fff" onPress={() => seek(t.pos + 10)} />
+            <Text style={styles.time}>{clock(t.pos)}{t.dur ? ` / ${clock(t.dur)}` : ""}</Text>
+            <Press onPress={() => { update({ captions: !captions }); run(`cc(${!captions})`); }} style={[styles.speed, captions && styles.on]}
+              accessibilityRole="switch" accessibilityState={{ checked: captions }} accessibilityLabel="Captions">
+              <Text style={[styles.speedText, captions && styles.onText]}>CC</Text>
+            </Press>
+            <Press onPress={() => setSpeeds(true)} style={styles.speed} accessibilityRole="button" accessibilityLabel={`Speed ${speed}×`}>
+              <Text style={styles.speedText}>{speed}×</Text>
+            </Press>
+            <IconButton name={full ? "contract" : "expand"} label={full ? "Exit full screen" : "Full screen"} color="#fff" onPress={onFull} />
+          </View>
         </View>
-      </View>
+      ) : null}
       <Sheet open={speeds} onClose={() => setSpeeds(false)} title="Playback speed">
         <View style={styles.speeds}>
           {SPEEDS.map((s) => (
@@ -163,24 +166,26 @@ export function Player({ vid, title }: { vid: string; title: string }) {
   const [width, setWidth] = useState(0);
   const pos = useRef(0);
   const [start, setStart] = useState(0); // where a newly mounted embed begins
+  const [own, setOwn] = useState(() => getState().ownControls ?? !tablet); // fixed while a video plays
+  const bar = own ? BAR : 0;
   const toggle = () => { setStart(pos.current); setFull((f) => !f); };
   const onStatus = (s: Status) => { setStatus(s); setFull(false); };
 
   if (status === "playing") {
     // In full screen the video takes the largest 16:9 box that leaves room for the controls.
-    const fw = Math.min(win.width, ((win.height - BAR) * 16) / 9);
+    const fw = Math.min(win.width, ((win.height - bar) * 16) / 9);
     return (
       <View onLayout={(e) => setWidth(e.nativeEvent.layout.width)}>
         {full ? (
-          <View style={{ height: (width * 9) / 16 + BAR, backgroundColor: "#000" }} />
+          <View style={{ height: (width * 9) / 16 + bar, backgroundColor: "#000" }} />
         ) : width ? (
-          <Screen vid={vid} start={start} width={Math.min(width, ((win.height - BAR - INSET) * 16) / 9)} full={false} onFull={toggle} onStatus={onStatus} onTime={(t) => (pos.current = t)} />
+          <Screen vid={vid} start={start} width={Math.min(width, ((win.height - bar - INSET) * 16) / 9)} own={own} full={false} onFull={toggle} onStatus={onStatus} onTime={(t) => (pos.current = t)} />
         ) : null}
         {full ? (
           <Modal visible onRequestClose={toggle} supportedOrientations={["portrait", "landscape"]} statusBarTranslucent navigationBarTranslucent>
             <StatusBar hidden />
             <View style={styles.full}>
-              <Screen vid={vid} start={start} width={fw} full onFull={toggle} onStatus={onStatus} onTime={(t) => (pos.current = t)} />
+              <Screen vid={vid} start={start} width={fw} own={own} full onFull={toggle} onStatus={onStatus} onTime={(t) => (pos.current = t)} />
             </View>
           </Modal>
         ) : null}
@@ -190,9 +195,9 @@ export function Player({ vid, title }: { vid: string; title: string }) {
 
   const note = NOTE[status];
   return (
-    <View style={{ width: "100%", maxWidth: ((win.height - BAR - INSET) * 16) / 9, alignSelf: "center" }}>
+    <View style={{ width: "100%", maxWidth: ((win.height - bar - INSET) * 16) / 9, alignSelf: "center" }}>
       <Pressable
-        onPress={() => { markSeen(vid); pos.current = 0; setStart(0); setStatus("playing"); }}
+        onPress={() => { markSeen(vid); pos.current = 0; setStart(0); setOwn(getState().ownControls ?? !tablet); setStatus("playing"); }}
         accessibilityRole="button"
         accessibilityLabel={`${status === "ended" ? "Watch again" : "Play"}: ${title}`}
       >

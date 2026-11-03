@@ -1,13 +1,13 @@
 import { ScrollView, StyleSheet, Switch, Text, View } from "react-native";
 import { Chip, TopBar } from "../components/ui";
 import { update, useStore, type State } from "../store";
-import { font, useColors } from "../theme";
+import { font, tablet, useColors } from "../theme";
 
 const THEMES: [State["theme"], string][] = [["dark", "Dark"], ["light", "Light"], ["system", "Use device theme"]];
 
 export default function Settings() {
   const c = useColors();
-  const { frames, theme } = useStore();
+  const { frames, theme, ownControls } = useStore();
   return (
     <View style={{ flex: 1 }}>
       <TopBar title="Settings" right={<View />} />
@@ -26,6 +26,16 @@ export default function Settings() {
             </Text>
           </View>
           <Switch value={frames} trackColor={{ true: c.accent, false: c.line }} thumbColor="#FFFFFF" onValueChange={(v) => update({ frames: v })} accessibilityLabel="Show video frames instead of thumbnails" />
+        </View>
+        <View style={styles.row}>
+          <View style={styles.text}>
+            <Text style={[styles.h, { color: c.text }]}>{"Use HackerTube's player controls"}</Text>
+            <Text style={[styles.p, { color: c.muted }]}>
+              {"Play, skip, seek, speed, captions and full screen sit under the video, so nothing covers it. Turn it " +
+                "off to use YouTube's own controls on the video instead. Applies from the next video you play."}
+            </Text>
+          </View>
+          <Switch value={ownControls ?? !tablet} trackColor={{ true: c.accent, false: c.line }} thumbColor="#FFFFFF" onValueChange={(v) => update({ ownControls: v })} accessibilityLabel="Use HackerTube's player controls" />
         </View>
       </ScrollView>
     </View>

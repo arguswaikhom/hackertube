@@ -1,4 +1,4 @@
-import { AccessibilityInfo, useColorScheme } from "react-native";
+import { AccessibilityInfo, Dimensions, useColorScheme } from "react-native";
 import { useStore } from "./store";
 
 // YouTube's neutral palette with HackerTube's orange (#ff6600, from hackertube.org). See docs/DECISIONS.md, D7 and D14.
@@ -25,6 +25,10 @@ export const font = { body: "Figtree", display: "Bricolage Grotesque" } as const
 
 /** Columns for a video grid: one on phones, more on tablets. */
 export const columnsFor = (width: number) => (width >= 1100 ? 3 : width >= 680 ? 2 : 1);
+
+/** Shortest side of 600 dp or more: Android's own cutoff for tablets. Doesn't change with rotation. */
+const screen = Dimensions.get("screen");
+export const tablet = Math.min(screen.width, screen.height) >= 600;
 
 export const hit = 12; // extra touch area around small icons
 

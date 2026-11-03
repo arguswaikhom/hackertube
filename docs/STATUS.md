@@ -7,7 +7,12 @@ Update this at the end of each session. Last updated: 2026-11-03.
 The YouTube-style redesign and site parity work are built and committed on `main`. `main` is pushed to the public GitHub repo.
 The app works today without YouTube numbers; Longs, durations and date, length and view filters wait on step 1 below.
 
-## Latest change (2026-11-03): own player controls
+## Latest change (2026-11-03): choosing the player controls
+
+Settings has a switch between our controls and YouTube's own (D17). Phones default to ours, tablets to YouTube's.
+Typecheck passes and lint shows no new errors. Not yet run on a device: neither mode after the change, nor a tablet.
+
+## Earlier change (2026-11-03): own player controls
 
 YouTube's controls are hidden and ours sit under the video: play/pause, 10-second skips, seek bar, speed (saved) and
 captions and full screen. See D16. On a Pixel 7 (Android 17) with a release build: play/pause, skips, tapping the
@@ -19,8 +24,10 @@ shows YouTube's own overlay (title, channel, a link button and a suggested video
 our button doesn't. Rechecked on the Pixel 7 after merging the APK release work: launch, playback, speed, and
 captions staying off until switched on. Not tried: dragging the seek bar, TalkBack, a tablet, and iOS.
 
-Seen while testing, not caused by this change: tapping a video card in the first seconds after a fresh install crashed
-the app ("The imperative router is unavailable before the first render has finished").
+Fixed after it (2026-11-03): tapping anything that navigates crashed the app ("The imperative router is unavailable
+before the first render has finished") when Android started a second copy of the app before closing the first, which
+Pixel's "app updated" screen does after an install. `useKeepRouterConnected` in `src/app/_layout.tsx` reconnects
+expo-router's shared router. Reproduced twice before the fix and not after, on the Pixel 7.
 
 ## Earlier change (2026-11-03): APKs on GitHub Releases with in-app updates
 

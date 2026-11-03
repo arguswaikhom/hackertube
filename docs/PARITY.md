@@ -27,6 +27,7 @@ Audited against the site's client code on 2026-11-02. Status: **Done**, **Needs 
 | Search rate-limit message | Left out | Search runs on the device |
 | Watch: frame first, then play | Done | `Player.tsx` |
 | Own controls: seek, ±10 s, speed, captions, full screen | Done | `Player.tsx` |
+| Setting: our controls or YouTube's | Done | `settings.tsx`; ours on phones, YouTube's on tablets |
 | Watch: like, dislike, watch later, open in YouTube | Done | `watch/[vid].tsx` |
 | Watch: recommender line | Done | `recLine` |
 | Watch: type, shelf life, summary, why HN, categories, tags | Done | Description sheet |

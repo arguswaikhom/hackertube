@@ -13,10 +13,11 @@ export type State = {
   theme: "system" | "light" | "dark";
   speed: number; // playback rate, kept between videos
   captions: boolean;
+  ownControls: boolean | null; // our player controls or YouTube's; null = ours on phones, YouTube's on tablets
 };
 
 const KEY = "state-v2";
-const empty: State = { likes: [], dislikes: [], later: [], seen: [], hidden: [], frames: true, theme: "dark", speed: 1, captions: false };
+const empty: State = { likes: [], dislikes: [], later: [], seen: [], hidden: [], frames: true, theme: "dark", speed: 1, captions: false, ownControls: null };
 
 const load = (): State => {
   try {

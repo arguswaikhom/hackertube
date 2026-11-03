@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
-import { Stack } from "expo-router";
+import { Stack, router, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import * as SystemUI from "expo-system-ui";
 import { SQLiteProvider, deleteDatabaseAsync, type SQLiteDatabase } from "expo-sqlite";
@@ -27,7 +27,24 @@ async function init(db: SQLiteDatabase) {
   }
 }
 
+// Android can start a second copy of the app before the first one closes: Pixel's "app updated" screen relaunches it
+// with a fresh task. expo-router shares one global `router`, and the closing copy disconnects it after the new copy
+// has connected it, so every tap that navigates crashes. Whichever copy is still running connects it again.
+const live: ReturnType<typeof useRouter>[] = [];
+function useKeepRouterConnected() {
+  const mine = useRouter();
+  useEffect(() => {
+    live.push(mine);
+    return () => {
+      live.splice(live.indexOf(mine), 1);
+      // after the closing copy's own cleanup has run
+      setTimeout(() => { const last = live.at(-1); if (last) Object.assign(router, last); });
+    };
+  }, [mine]);
+}
+
 export default function Root() {
+  useKeepRouterConnected();
   const c = useColors();
   const { theme } = useStore();
   const [failed, setFailed] = useState(false);

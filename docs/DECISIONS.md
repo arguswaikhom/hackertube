@@ -128,3 +128,10 @@ isn't offered: YouTube ignores quality requests from embeds since 2019 and alway
 embed, including controls. They apply to any app using the player. **Full screen** is rebuilt
 as a Modal holding a fresh embed that starts where the inline one stopped, because hiding YouTube's controls also hides
 its full-screen button.
+
+## D17. A setting for our controls or YouTube's (2026-11-03)
+The user asked for a choice between our player controls (D16) and YouTube's own. Settings has a switch; until it's
+touched, phones get ours and tablets get YouTube's. **Tablet** means the screen's shortest side is 600 dp or more,
+Android's own cutoff, so it doesn't flip when the device rotates. With YouTube's controls the app sets neither speed nor
+captions, so YouTube behaves as it does anywhere else, and full screen is YouTube's own button again. The choice is read
+when a video starts playing, because switching it would mean reloading the embed.
