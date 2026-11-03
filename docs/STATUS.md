@@ -39,8 +39,9 @@ The metadata script ran against the real YouTube API on 2026-11-03: 6,454 videos
 
 ## Next steps, in order
 
-1. Publish the public repo, add the `YOUTUBE_API_KEY` secret, enable Pages, run the workflow once.
-2. Put the Pages URL in `expo.extra.metaUrl`, rebuild, and check real numbers on a device.
+1. The repo is public, the `YOUTUBE_API_KEY` secret is set, Pages is enabled and `metaUrl` points at it. The workflow
+   couldn't start because the GitHub account needs a billing issue resolved. Once it is, run the workflow and check real
+   numbers on a device.
 3. Offer an Android APK on GitHub Releases. That needs a release signing key kept outside the repo, so updates install
    over older versions.
 4. Build iOS on a Mac.
