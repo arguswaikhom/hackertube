@@ -86,7 +86,8 @@ The metadata workflow ran on GitHub Actions on 2026-11-03 (6,454 videos, 0 gone)
 2. Retest the screens that depend on metadata against real numbers: filters by date, length and views, and sorting.
 3. Done 2026-11-03 (D15): `v1.0.0` and `v1.0.1` were built by the workflow and published on GitHub Releases. On an
    Android 10 phone (Xiaomi), 1.0.0 showed the update dialog, downloaded 1.0.1 in the app with the progress card, and
-   Android installed it over 1.0.0. Merged into `main` the same day. Those two tags were cut before the channel avatars change, so the next tag ships it.
+   Android installed it over 1.0.0. Merged into `main` the same day. `v1.0.2` followed the same day with channel avatars, our player controls and the setting
+   to choose them; the workflow built and published it. Updating a phone to it hasn't been tried.
 4. Build iOS on a Mac.
 
 ## Known limits
