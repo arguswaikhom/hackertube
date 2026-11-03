@@ -99,3 +99,21 @@ and card anatomy stay as in D7. What changed:
   keep whatever theme they had saved.
 **Why not Reanimated or an icon library with SVG?** Both add native code and a dependency for effects `Animated` and the
 bundled icon fonts already cover.
+
+## D15. APKs on GitHub Releases, with an in-app update prompt (2026-11-03)
+Every `v*` tag builds a signed APK in GitHub Actions and attaches it to a release. On launch, Android builds ask
+GitHub's API for the latest release and, if it's newer, show a dialog: Update, Later, or Skip this version. Update
+downloads the APK inside the app, with a progress card, and opens Android's installer on it. The first time, Android
+asks the user to allow installs from HackerTube.
+- **The tag is the version.** `v1.2.3` becomes versionName 1.2.3 and versionCode 10203, so each part stays under 100.
+- **Signing:** the generated Gradle project signs release builds with the debug key, so the workflow re-signs the APK
+  with `apksigner` and a release key from repository secrets. No config plugin needed. Losing that key means users must
+  uninstall to update, so keep a backup of it outside the repo.
+- **Phones only:** the APK carries arm64-v8a and armeabi-v7a, not the x86 emulator builds.
+- **Privacy:** the check sends GitHub the device's IP address once per launch, with nothing else. No accounts or IDs.
+**Why not expo-updates or Play's in-app updates?** OTA updates can't change native code and need hosting such as EAS;
+Play's in-app updates only work for apps installed from the Play Store. A dialog linking to the APK covers it.
+**How the install works:** `expo-file-system` downloads to the cache and gives a `content://` URI through its own
+FileProvider; `expo-intent-launcher` opens it with ACTION_VIEW. That needs the REQUEST_INSTALL_PACKAGES permission in
+`app.json`. Android checks the signature itself, so a tampered APK can't install over the app. If the download fails,
+the app offers the release page instead.

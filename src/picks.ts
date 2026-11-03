@@ -212,3 +212,11 @@ export function ago(ms?: number, now = Date.now()) {
 }
 
 export const hours = (m: number) => (m >= 60 ? `${Math.floor(m / 60)} hr ${m % 60} min` : `${m} min`);
+
+/** True when version `a` ("1.10.0" or "v1.10.0") is later than `b`. */
+export function isNewer(a: string, b: string) {
+  const n = (v: string) => v.replace(/^v/, "").split(".").map((x) => parseInt(x, 10) || 0);
+  const [x, y] = [n(a), n(b)];
+  for (let i = 0; i < Math.max(x.length, y.length); i++) if ((x[i] ?? 0) !== (y[i] ?? 0)) return (x[i] ?? 0) > (y[i] ?? 0);
+  return false;
+}

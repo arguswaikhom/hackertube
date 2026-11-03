@@ -7,7 +7,12 @@ Update this at the end of each session. Last updated: 2026-11-03.
 The YouTube-style redesign and site parity work are built and committed on `main`. `main` is pushed to the public GitHub repo.
 The app works today without YouTube numbers; Longs, durations and date, length and view filters wait on step 1 below.
 
-## Latest change (2026-11-03): channel avatars and links
+## Latest change (2026-11-03): APKs on GitHub Releases with in-app updates
+
+A `v*` tag builds a signed APK and publishes a GitHub Release (D15). Android builds check for a newer release on launch,
+download it in the app and open Android's installer. Tested end to end from 1.0.0 to 1.0.1 on the Android 10 phone.
+
+## Earlier change (2026-11-03): channel avatars and links
 
 Cards and the watch page show the channel's picture instead of its initial. Tapping the channel on the watch page opens
 it in YouTube. The URLs come from the metadata file (D5),
@@ -56,11 +61,17 @@ The metadata workflow ran on GitHub Actions on 2026-11-03 (6,454 videos, 0 gone)
 1. Done 2026-11-03: the weekly workflow runs on GitHub, publishes `meta.json` to Pages, and an Android 10 phone showed
    the downloaded durations, views and Longs.
 2. Retest the screens that depend on metadata against real numbers: filters by date, length and views, and sorting.
-3. Offer an Android APK on GitHub Releases. That needs a release signing key kept outside the repo, so updates install
-   over older versions.
+3. Done 2026-11-03 (D15): `v1.0.0` and `v1.0.1` were built by the workflow and published on GitHub Releases. On an
+   Android 10 phone (Xiaomi), 1.0.0 showed the update dialog, downloaded 1.0.1 in the app with the progress card, and
+   Android installed it over 1.0.0. Merged into `main` the same day. Those two tags were cut before the channel avatars change, so the next tag ships it.
 4. Build iOS on a Mac.
 
 ## Known limits
+
+- The first in-app install on the Xiaomi phone failed with "App not installed" (code -22, verification failure) after
+  Google Play Protect's "Install without scanning". Tapping Update again worked. People who hit this can retry.
+- Phones that ran a locally built copy are signed with the debug key; they must uninstall once before the release APK
+  installs.
 
 - Catalogue is frozen at the 2026-10-31 export. New data means a rebuild and an app update.
 - Old catalogue files stay on the device after a version bump (a few tens of MB).

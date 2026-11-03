@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
-  DIM, ago, applyFilter, duration, feed, ftsQuery, fuse, hours, nearest, termsOf, views,
+  DIM, ago, applyFilter, duration, feed, ftsQuery, fuse, hours, isNewer, nearest, termsOf, views,
   type Item, type Meta, type Taste,
 } from "./picks.ts";
 
@@ -122,4 +122,11 @@ test("formatting matches the site", () => {
   assert.equal(views(1200000), "1.2M views");
   assert.equal(ago(Date.UTC(2020, 0, 1), Date.UTC(2023, 0, 2)), "3 years ago");
   assert.equal(hours(392), "6 hr 32 min");
+});
+
+test("isNewer compares versions as numbers", () => {
+  assert.ok(isNewer("v1.10.0", "1.9.0"));
+  assert.ok(isNewer("1.0.1", "1.0"));
+  assert.ok(!isNewer("1.0.0", "1.0.0"));
+  assert.ok(!isNewer("v0.9.9", "1.0.0"));
 });
