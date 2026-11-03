@@ -24,7 +24,7 @@ Automated: 15 logic tests in `src/picks.test.ts`, type check, `expo-doctor`, sel
 Checked earlier, before the redesign, and not repeated since: offline mode, and the player closing when a video ends.
 The player code for that is unchanged.
 
-The metadata script ran against the real YouTube API on 2026-11-03: 6,454 videos returned, 0 gone, 286 KB file.
+The metadata workflow ran on GitHub Actions on 2026-11-03 (6,454 videos, 0 gone) and the app downloaded the result.
 
 ## Not verified
 
@@ -33,15 +33,14 @@ The metadata script ran against the real YouTube API on 2026-11-03: 6,454 videos
   the feed, full-screen video, and rotating during playback.
 - Two frames looked blank in one emulator screenshot. Their images exist on YouTube, so slow loading is the likely
   cause, but that wasn't confirmed.
-- The app hasn't shown real YouTube numbers yet, because `public/meta.json` isn't hosted. On-device metadata screens were
-  tested only with invented numbers, patched into a throwaway copy. Those numbers never enter this repo.
-- The GitHub Actions workflow has never run.
+- Date, length and view filters and sorting were tested on a device only with invented numbers. Home, Longs and
+  durations have been checked with the real downloaded file.
 
 ## Next steps, in order
 
-1. The repo is public, the `YOUTUBE_API_KEY` secret is set, Pages is enabled and `metaUrl` points at it. The workflow
-   couldn't start because the GitHub account needs a billing issue resolved. Once it is, run the workflow and check real
-   numbers on a device.
+1. Done 2026-11-03: the weekly workflow runs on GitHub, publishes `meta.json` to Pages, and an Android 10 phone showed
+   the downloaded durations, views and Longs.
+2. Retest the screens that depend on metadata against real numbers: filters by date, length and views, and sorting.
 3. Offer an Android APK on GitHub Releases. That needs a release signing key kept outside the repo, so updates install
    over older versions.
 4. Build iOS on a Mac.

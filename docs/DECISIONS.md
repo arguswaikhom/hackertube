@@ -33,7 +33,7 @@ redistribution and require stored data to stay current. So:
 
 **Why not call YouTube from the app?** One key shared by every install would run out of quota, and the key would ship
 in the app. **Risk:** the file is publicly readable. Moving it behind a Cloudflare Worker is a small change if YouTube's
-compliance review objects. **Status:** the script works against the real API (2026-11-03); the workflow and hosting aren't set up yet.
+compliance review objects. **Status:** live since 2026-11-03 at https://arguswaikhom.github.io/hackertube/meta.json, refreshed weekly.
 
 **The key:** Google Cloud project `watchworthy-app`, key `watchworthy-metadata`, restricted to YouTube Data API v3. No
 application restriction, because GitHub Actions has no fixed IP. It lives in `.env` (git-ignored) and as the
