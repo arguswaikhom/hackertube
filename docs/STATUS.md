@@ -49,8 +49,10 @@ The metadata workflow ran on GitHub Actions on 2026-11-03 (6,454 videos, 0 gone)
 1. Done 2026-11-03: the weekly workflow runs on GitHub, publishes `meta.json` to Pages, and an Android 10 phone showed
    the downloaded durations, views and Longs.
 2. Retest the screens that depend on metadata against real numbers: filters by date, length and views, and sorting.
-3. Offer an Android APK on GitHub Releases. That needs a release signing key kept outside the repo, so updates install
-   over older versions.
+3. Built, not yet run (branch `apk-releases`, D15): a `v*` tag builds a signed APK onto GitHub Releases, and the app
+   offers newer releases on launch, downloading and installing them in the app. The release key exists and its three
+   secrets are set. Left to do: merge, push `v1.0.0`, install it, then push `v1.0.1` and check the dialog, the
+   download card and the installer.
 4. Build iOS on a Mac.
 
 ## Known limits

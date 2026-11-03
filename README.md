@@ -28,6 +28,12 @@ Taken on a Pixel 7 in the default dark theme.
 | :---: | :---: |
 | <img src="docs/screenshots/home-light.png" width="260" alt="Home feed in light theme"> | <img src="docs/screenshots/motion.gif" width="260" alt="Opening the three-dot sheet, opening a video and tapping Like"> |
 
+## Install on Android
+
+Download the APK from the latest [release](https://github.com/arguswaikhom/hackertube/releases/latest) and open it.
+Android asks you to allow installs from your browser the first time. When a newer version is out, the app tells you
+on launch, downloads it for you and opens Android's installer. Updates keep your likes and history.
+
 ## Build it
 
 You need Node 22+, and for Android the Android SDK with JDK 17+. iOS builds need a Mac with Xcode.
@@ -65,6 +71,13 @@ in the app, so a weekly GitHub Action refreshes a small file that the app downlo
 a `YOUTUBE_API_KEY` repository secret, enable GitHub Pages with GitHub Actions as the source, and point
 `expo.extra.metaUrl` in `app.json` at your Pages URL. For local runs, copy `.env.example` to `.env`. Never commit the
 key or put it in the app.
+
+## Releases
+
+Pushing a tag like `v1.2.0` runs `.github/workflows/android-release.yml`: it builds the APK, signs it, and publishes a
+GitHub Release, which the installed apps then see. The tag sets the version, so there's nothing to bump by hand. To
+release from a fork, add three repository secrets for your own signing key: `ANDROID_KEYSTORE_BASE64` (the keystore,
+base64-encoded), `ANDROID_KEYSTORE_PASSWORD` and `ANDROID_KEY_ALIAS`, and change `releasesUrl` in `app.json`.
 
 ## License
 
