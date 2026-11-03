@@ -37,6 +37,8 @@ Audited against the site's client code on 2026-11-02. Status: **Done**, **Needs 
 | Play all on YouTube | Done | `PlayAll` in `Lists.tsx` |
 | Watch-later clock on thumbnails | Done | `Frame` |
 | Duration badge on thumbnails | Needs metadata | |
+| Channel avatars on cards and the watch page | Needs metadata | `Avatar` in `VideoCard.tsx`; initial until then |
+| Channel link on the watch page | Done | Opens the channel in YouTube (`channelUrl` in `meta.ts`); a name search until metadata loads |
 | Settings: frames or thumbnails | Done | `settings.tsx` |
 | Theme: light, dark, device | Done | `settings.tsx` |
 | About: why, how, privacy, credits, stats | Done | `about.tsx` |

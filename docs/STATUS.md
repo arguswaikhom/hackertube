@@ -4,10 +4,17 @@ Update this at the end of each session. Last updated: 2026-11-03.
 
 ## Where things stand
 
-The YouTube-style redesign and site parity work are built and committed on `main`. There is no GitHub remote yet.
+The YouTube-style redesign and site parity work are built and committed on `main`. `main` is pushed to the public GitHub repo.
 The app works today without YouTube numbers; Longs, durations and date, length and view filters wait on step 1 below.
 
-## Latest change (2026-11-03): modernized look
+## Latest change (2026-11-03): channel avatars and links
+
+Cards and the watch page show the channel's picture instead of its initial. Tapping the channel on the watch page opens
+it in YouTube. The URLs come from the metadata file (D5),
+so they appear only after the weekly workflow publishes a file made by the updated script. Seen on a Pixel 7
+(Android 17) with a release build that bundled a locally fetched file: Home cards and the watch page show them.
+
+## Earlier change (2026-11-03): modernized look
 
 New fonts, rounder shapes, Ionicons, touch animations and dark as the default theme. See D14. Checked on the Android 10
 phone with a release build: Home, the three-dot sheet, the watch page with Like switched on, You, Categories,

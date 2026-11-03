@@ -30,6 +30,11 @@ redistribution and require stored data to stay current. So:
 - `.github/workflows/youtube-meta.yml` runs it weekly and publishes it to GitHub Pages, so there's no server to run.
 - `src/meta.ts` downloads it from `expo.extra.metaUrl` in `app.json`, caches it, and discards it after 30 days.
 - With no file, the app works without those numbers: no durations, no Longs, and those filters are hidden.
+- Channels come the same way (added 2026-11-03): the script looks up each video's channel and lists
+  `[channel id, avatar URL]` once per channel in `channels`, with each video pointing at one by index. Until a file has
+  them, cards show the channel's initial. The images load from YouTube's servers, like thumbnails already do. Tapping the
+  channel on the watch page opens it in YouTube; the app has no channel pages of its own. Without the file it opens a
+  YouTube search for the channel's name.
 
 **Why not call YouTube from the app?** One key shared by every install would run out of quota, and the key would ship
 in the app. **Risk:** the file is publicly readable. Moving it behind a Cloudflare Worker is a small change if YouTube's
