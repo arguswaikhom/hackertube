@@ -7,7 +7,15 @@ Update this at the end of each session. Last updated: 2026-11-03.
 The YouTube-style redesign and site parity work are built and committed on `main`. `main` is pushed to the public GitHub repo.
 The app works today without YouTube numbers; Longs, durations and date, length and view filters wait on step 1 below.
 
-## Latest change (2026-11-03): choosing the player controls
+## Latest change (2026-11-03): first iOS build
+
+A Release build ran on the iPhone 17 simulator (Home renders correctly) and on an iPhone 13 (iOS 27.0.1), where the
+user found the app working. No code changes were needed. The phone build is signed with a free personal team, so it
+stops opening 7 days after install; reinstall from the Mac to keep using it. iOS isn't distributed to anyone yet (D18).
+To sign a phone build without committing a team ID: run `npx expo run:ios` once to generate `ios/`, add
+`DEVELOPMENT_TEAM` to the generated project, then build with `xcodebuild ... -allowProvisioningUpdates`.
+
+## Earlier change (2026-11-03): choosing the player controls
 
 Settings has a switch between our controls and YouTube's own (D17). Phones default to ours, tablets to YouTube's.
 On the Android 10 phone with a release build: the switch starts on, a video plays with our controls, and after
@@ -71,7 +79,8 @@ The metadata workflow ran on GitHub Actions on 2026-11-03 (6,454 videos, 0 gone)
 
 ## Not verified
 
-- iOS has never been built or run.
+- iOS: only Home was checked on the simulator. On the iPhone the user confirmed it works but item-by-item checks of
+  playback, both control modes, full screen and rotation weren't recorded. iPad wasn't tried.
 - Not tried on the redesign: Play all on YouTube, Share, clearing history, the frames switch, "Not interested" changing
   the feed, full-screen video, and rotating during playback.
 - Two frames looked blank in one emulator screenshot. Their images exist on YouTube, so slow loading is the likely
@@ -88,7 +97,7 @@ The metadata workflow ran on GitHub Actions on 2026-11-03 (6,454 videos, 0 gone)
    Android 10 phone (Xiaomi), 1.0.0 showed the update dialog, downloaded 1.0.1 in the app with the progress card, and
    Android installed it over 1.0.0. Merged into `main` the same day. `v1.0.2` followed the same day with channel avatars, our player controls and the setting
    to choose them; the workflow built and published it. Updating a phone to it hasn't been tried.
-4. Build iOS on a Mac.
+4. Done 2026-11-03: iOS builds on a Mac and runs on an iPhone. Distribution waits on D18.
 
 ## Known limits
 

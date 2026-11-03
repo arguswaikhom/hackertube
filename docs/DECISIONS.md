@@ -135,3 +135,10 @@ touched, phones get ours and tablets get YouTube's. **Tablet** means the screen'
 Android's own cutoff, so it doesn't flip when the device rotates. With YouTube's controls the app sets neither speed nor
 captions, so YouTube behaves as it does anywhere else, and full screen is YouTube's own button again. The choice is read
 when a video starts playing, because switching it would mean reloading the embed.
+
+## D18. No iOS distribution for now (2026-11-03)
+iOS can't copy the Android setup (D15): Apple doesn't let people install apps from a website, or apps update their own
+code from downloaded binaries. The ways out all need the $99/yr Apple Developer Program (App Store, TestFlight public
+link, EU alternative stores), except AltStore/SideStore, where users re-sign every 7 days. The user chose none of them
+for now. **If revisited:** TestFlight then the App Store, with EAS Update for in-app JavaScript updates, which Apple
+allows for store apps and which would also serve Android.
