@@ -94,3 +94,14 @@ and card anatomy stay as in D7. What changed:
   keep whatever theme they had saved.
 **Why not Reanimated or an icon library with SVG?** Both add native code and a dependency for effects `Animated` and the
 bundled icon fonts already cover.
+
+## D15. Our own player controls, under the video (2026-11-03)
+The user asked for a player with more options, starting with speed. Videos still play through YouTube's embed (D2),
+with YouTube's controls hidden (`controls: 0`) and ours driven through the IFrame API: play and pause, 10-second skips,
+a seek bar, speed from 0.5× to 2×, captions on or off (both remembered between videos), and full screen.
+**Captions** use the player's `captions` module, which YouTube uses but doesn't document, so it may break. **Quality**
+isn't offered: YouTube ignores quality requests from embeds since 2019 and always picks automatically.
+**Why under the video and not on it:** YouTube's Required Minimum Functionality rules forbid anything in front of the
+embed, including controls. They apply to any app using the player. **Full screen** is rebuilt
+as a Modal holding a fresh embed that starts where the inline one stopped, because hiding YouTube's controls also hides
+its full-screen button.

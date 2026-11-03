@@ -11,10 +11,12 @@ export type State = {
   hidden: string[]; // videos YouTube reports as removed
   frames: boolean; // show a frame from the video instead of the uploader's thumbnail
   theme: "system" | "light" | "dark";
+  speed: number; // playback rate, kept between videos
+  captions: boolean;
 };
 
 const KEY = "state-v2";
-const empty: State = { likes: [], dislikes: [], later: [], seen: [], hidden: [], frames: true, theme: "dark" };
+const empty: State = { likes: [], dislikes: [], later: [], seen: [], hidden: [], frames: true, theme: "dark", speed: 1, captions: false };
 
 const load = (): State => {
   try {

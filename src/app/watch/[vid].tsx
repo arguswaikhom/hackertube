@@ -149,20 +149,15 @@ export default function Watch() {
         <View style={styles.close}>
           <IconButton name="chevron-down" label="Close video" size={26} onPress={() => router.back()} />
         </View>
-        {wide ? (
-          <View style={styles.wide}>
-            <ScrollView style={styles.main}>
-              <Player key={vid} vid={v.vid} title={v.title} />
-              <Header v={v} said={said} />
-            </ScrollView>
-            <FlatList style={styles.side} data={next} keyExtractor={(n) => n.vid} ListHeaderComponent={up} renderItem={({ item }) => <VideoRow video={item} />} />
-          </View>
-        ) : (
-          <>
+        {/* the player keeps the same place in both layouts, so rotating doesn't restart it */}
+        <View style={wide ? styles.wide : styles.narrow}>
+          <View style={wide ? { width: (width - 48) * 0.6 } : undefined}>
             <Player key={vid} vid={v.vid} title={v.title} />
-            <FlatList data={next} keyExtractor={(n) => n.vid} ListHeaderComponent={<><Header v={v} said={said} />{up}</>} renderItem={({ item }) => <VideoRow video={item} />} />
-          </>
-        )}
+            {wide ? <ScrollView><Header v={v} said={said} /></ScrollView> : null}
+          </View>
+          <FlatList style={wide ? styles.side : undefined} data={next} keyExtractor={(n) => n.vid}
+            ListHeaderComponent={wide ? up : <><Header v={v} said={said} />{up}</>} renderItem={({ item }) => <VideoRow video={item} />} />
+        </View>
       </View>
     </VideoMenuProvider>
   );
@@ -170,8 +165,8 @@ export default function Watch() {
 
 const styles = StyleSheet.create({
   wide: { flex: 1, flexDirection: "row", gap: 16, paddingHorizontal: 16 },
-  main: { flex: 3 },
-  side: { flex: 2 },
+  narrow: { flex: 1 },
+  side: { flex: 1 },
   close: { height: 48, justifyContent: "center", paddingLeft: 6 },
   block: { paddingHorizontal: 16, paddingTop: 16 },
   title: { fontFamily: font.display, fontSize: 21, lineHeight: 26, fontWeight: "600", letterSpacing: -0.3 },
