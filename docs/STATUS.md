@@ -49,13 +49,17 @@ The metadata workflow ran on GitHub Actions on 2026-11-03 (6,454 videos, 0 gone)
 1. Done 2026-11-03: the weekly workflow runs on GitHub, publishes `meta.json` to Pages, and an Android 10 phone showed
    the downloaded durations, views and Longs.
 2. Retest the screens that depend on metadata against real numbers: filters by date, length and views, and sorting.
-3. Built, not yet run (branch `apk-releases`, D15): a `v*` tag builds a signed APK onto GitHub Releases, and the app
-   offers newer releases on launch, downloading and installing them in the app. The release key exists and its three
-   secrets are set. Left to do: merge, push `v1.0.0`, install it, then push `v1.0.1` and check the dialog, the
-   download card and the installer.
+3. Done 2026-11-03 (D15): `v1.0.0` and `v1.0.1` were built by the workflow and published on GitHub Releases. On an
+   Android 10 phone (Xiaomi), 1.0.0 showed the update dialog, downloaded 1.0.1 in the app with the progress card, and
+   Android installed it over 1.0.0. Not merged into `main` yet; the tags point at branch `apk-releases`.
 4. Build iOS on a Mac.
 
 ## Known limits
+
+- The first in-app install on the Xiaomi phone failed with "App not installed" (code -22, verification failure) after
+  Google Play Protect's "Install without scanning". Tapping Update again worked. People who hit this can retry.
+- Phones that ran a locally built copy are signed with the debug key; they must uninstall once before the release APK
+  installs.
 
 - Catalogue is frozen at the 2026-10-31 export. New data means a rebuild and an app update.
 - Old catalogue files stay on the device after a version bump (a few tens of MB).
